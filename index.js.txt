@@ -1,31 +1,28 @@
 const express = require('express');
-const axios = require('axios');
-const cors = require('cors');
-
 const app = express();
-app.use(cors());
+const port = process.env.PORT || 3000;
 
-const PORT = process.env.PORT || 3000;
+app.use(express.json());
 
-app.get('/search', async (req, res) => {
-  const { query } = req.query;
-
-  if (!query) {
-    return res.status(400).json({ error: 'Faltou a palavra-chave.' });
-  }
-
-  // Aqui você coloca a lógica real para buscar produtos em marketplaces
-  // Por enquanto, está simulando com produtos fixos
-
-  const produtos = [
-    { loja: 'Mercado Livre', nome: `Produto 1 de ${query}`, preco: 100, imagem: '', link: '#' },
-    { loja: 'Amazon', nome: `Produto 2 de ${query}`, preco: 90, imagem: '', link: '#' },
-    { loja: 'Shopee', nome: `Produto 3 de ${query}`, preco: 80, imagem: '', link: '#' },
-  ];
-
-  res.json(produtos);
+// Rota teste
+app.get('/', (req, res) => {
+  res.send('🚀 API Buskai rodando!');
 });
 
-app.listen(PORT, () => {
-  console.log(`API rodando na porta ${PORT}`);
+// Rota de busca
+app.get('/search', (req, res) => {
+  const query = req.query.query || '';
+
+  const produtos = [
+    { nome: 'iPhone 15 Pro Max', preco: 7999, link: 'https://exemplo.com/produto1' },
+    { nome: 'iPhone 15', preco: 6999, link: 'https://exemplo.com/produto2' },
+    { nome: 'iPhone 15 Plus', preco: 7499, link: 'https://exemplo.com/produto3' }
+  ];
+
+  const resultados = produtos.filter(p => p.nome.toLowerCase().includes(query.toLowerCase()));
+  res.json({ produtos: resultados.length ? resultados : produtos });
+});
+
+app.listen(port, () => {
+  console.log(`🚀 API Buskai rodando na porta ${port}`);
 });
